@@ -2,74 +2,70 @@
 
 #include <Windows.h>
 
-typedef NTSTATUS (*NtSetInformationThread_t)(
+typedef NTSTATUS (*nt_set_information_thread_t)(
 	IN HANDLE ThreadHandle,
 	IN THREAD_INFORMATION_CLASS ThreadInformationClass,
 	IN PVOID ThreadInformation,
 	IN ULONG ThreadInformationLength);
 
-typedef NTSTATUS (*NtSetInformationProcess_t)(
+typedef NTSTATUS (*nt_set_information_process_t)(
 	IN HANDLE ProcessHandle,
 	IN THREAD_INFORMATION_CLASS ProcessInformationClass,
 	IN PVOID ProcessInformation,
 	IN ULONG ProcessInformationLength);
 
-typedef NTSTATUS (*NtQuerySystemInformation_t)(
+typedef NTSTATUS (*nt_query_system_information_t)(
 	IN SYSTEM_INFORMATION_CLASS SystemInformationClass,
 	OUT PVOID SystemInformation,
 	IN ULONG SystemInformationLength,
 	OUT PULONG ReturnLength);
 
-typedef NTSTATUS (*NtQueryInformationProcess_t)(
+typedef NTSTATUS (*nt_query_information_process_t)(
 	IN HANDLE ProcessHandle,
 	IN SYSTEM_INFORMATION_CLASS ProcessInformationClass,
 	OUT PVOID ProcessInformation,
 	IN ULONG ProcessInformationLength,
 	OUT PULONG ReturnLength);
 
-typedef NTSTATUS (*NtQueryObject_t)(
+typedef NTSTATUS (*nt_query_object_t)(
 	IN HANDLE ObjectHandle,
 	IN _OBJECT_INFORMATION_CLASS ObjectInformationClass,
 	OUT PVOID ObjectInformation,
 	IN ULONG Length,
 	OUT PULONG ResultLength);
 
-typedef NTSTATUS (*NtYieldExecution_t)();
+typedef NTSTATUS (*nt_yield_execution_t)();
 
-typedef NTSTATUS (*NtCreateThreadEx_t)();
+typedef NTSTATUS (*nt_create_thread_ex_t)();
 
-typedef NTSTATUS (*NtSetDebugFilterState_t)(
+typedef NTSTATUS (*nt_set_debug_filter_state_t)(
 	ULONG ComponentId,
 	ULONG Level,
 	BOOLEAN State);
 
-typedef NTSTATUS (*NtQueryPerformanceCounter_t)(
+typedef NTSTATUS (*nt_query_performance_counter_t)(
 	OUT PLARGE_INTEGER PerformanceCounter,
 	OUT PLARGE_INTEGER PerformanceFrequency OPTIONAL);
 
-typedef NTSTATUS (*NtGetContextThread_t)(
+typedef NTSTATUS (*nt_get_context_thread_t)(
 	IN HANDLE ThreadHandle,
 	OUT PCONTEXT pContext);
 
-typedef DWORD (WINAPI* t_GetTickCount)();
+typedef DWORD (WINAPI* get_tick_count_t)();
 
-typedef ULONGLONG (WINAPI* t_GetTickCount64)();
+typedef ULONGLONG (WINAPI* get_tick_count64_t)();
 
-typedef DWORD (WINAPI* t_OutputDebugStringA)(LPCSTR lpOutputString);
-
-/*
-	Объявляем незадокументрированные структуры
- */
+typedef DWORD (WINAPI* output_debug_string_a_t)(LPCSTR lpOutputString);
 
 typedef struct
 {
-	LIST_ENTRY Orders[3];
+	LIST_ENTRY orders[3];
 	PVOID64 base;
-	PVOID64 EntryPoint;
-	UINT Size;
-	UNICODE_STRING dllFullPath;
-	UNICODE_STRING dllname;
-} LDR_ENTRY;
+	PVOID64 entry_point;
+	UINT size;
+	UNICODE_STRING dll_full_path;
+	UNICODE_STRING dll_name;
+} ldr_entry;
 
 /*
 	Функция получения базового адреса модуля,
@@ -88,10 +84,10 @@ inline PVOID64 get_module_base(const LPWSTR module_name)
 	auto start = *reinterpret_cast<PVOID64*>(module_list_addr + 0x18);
 
 	// Берем первый LDR_ENTRY
-	auto* mod = static_cast<LDR_ENTRY*>(start);
+	auto* mod = static_cast<ldr_entry*>(start);
 
 	// Берем ссылку на след элемент после него (LinkedList жеж)
-	mod = reinterpret_cast<LDR_ENTRY*>(mod->Orders[0].Flink);
+	mod = reinterpret_cast<ldr_entry*>(mod->orders[0].Flink);
 
 	// идем, пока не пришли к началу
 	while (reinterpret_cast<UINT64>(start) != reinterpret_cast<UINT64>(mod))
@@ -99,7 +95,7 @@ inline PVOID64 get_module_base(const LPWSTR module_name)
 		if (mod->base != nullptr)
 		{
 			// Это нужный нам модуль?
-			if (!lstrcmpiW(static_cast<LPCWSTR>(mod->dllname.Buffer), module_name))
+			if (!lstrcmpiW(static_cast<LPCWSTR>(mod->dll_name.Buffer), module_name))
 			{
 				// Да!
 				return mod->base;
@@ -107,7 +103,7 @@ inline PVOID64 get_module_base(const LPWSTR module_name)
 		}
 
 		// Идем далее
-		mod = reinterpret_cast<LDR_ENTRY*>(mod->Orders[0].Flink);
+		mod = reinterpret_cast<ldr_entry*>(mod->orders[0].Flink);
 	}
 
 	return nullptr;

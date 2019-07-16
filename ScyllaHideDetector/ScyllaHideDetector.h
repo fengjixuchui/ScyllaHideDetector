@@ -6,7 +6,7 @@ inline void scyllahide_nt_set_information_thread()
 	auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtSetInformationThread");
 
-	const auto our_nt_set_information_thread = reinterpret_cast<NtSetInformationThread_t>(func);
+	const auto our_nt_set_information_thread = reinterpret_cast<nt_set_information_thread_t>(func);
 
 	auto hide = true;
 
@@ -29,7 +29,7 @@ inline void scyllahide_nt_set_information_process()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtSetInformationProcess");
 
-	const auto our_nt_set_information_process = reinterpret_cast<NtSetInformationProcess_t>(func);
+	const auto our_nt_set_information_process = reinterpret_cast<nt_set_information_process_t>(func);
 
 	auto hide = true;
 
@@ -52,7 +52,7 @@ inline void scyllahide_nt_query_system_information()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtQuerySystemInformation");
 
-	const auto our_nt_query_system_information = reinterpret_cast<NtQuerySystemInformation_t>(func);
+	const auto our_nt_query_system_information = reinterpret_cast<nt_query_system_information_t>(func);
 
 	auto hide = true;
 
@@ -75,7 +75,7 @@ inline void scyllahide_nt_query_information_process()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtQueryInformationProcess");
 
-	const auto our_nt_query_information_process = reinterpret_cast<NtQueryInformationProcess_t>(func);
+	const auto our_nt_query_information_process = reinterpret_cast<nt_query_information_process_t>(func);
 
 	auto hide = true;
 
@@ -98,7 +98,7 @@ inline void scyllahide_nt_query_object()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtQueryObject");
 
-	const auto our_nt_query_object = reinterpret_cast<NtQueryObject_t>(func);
+	const auto our_nt_query_object = reinterpret_cast<nt_query_object_t>(func);
 
 	auto hide = true;
 
@@ -121,7 +121,7 @@ inline void scyllahide_nt_yield_execution()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtYieldExecution");
 
-	const auto our_nt_yield_execution = reinterpret_cast<NtYieldExecution_t>(func);
+	const auto our_nt_yield_execution = reinterpret_cast<nt_yield_execution_t>(func);
 
 	our_nt_yield_execution();
 
@@ -142,7 +142,7 @@ inline void scyllahide_nt_create_thread_ex()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtCreateThreadEx");
 
-	const auto our_nt_create_thread_ex = reinterpret_cast<NtCreateThreadEx_t>(func);
+	const auto our_nt_create_thread_ex = reinterpret_cast<nt_create_thread_ex_t>(func);
 
 	our_nt_create_thread_ex();
 
@@ -163,7 +163,7 @@ inline void scyllahide_nt_set_debug_filter_state()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtSetDebugFilterState");
 
-	const auto our_nt_set_debug_filter_state = reinterpret_cast<NtSetDebugFilterState_t>(func);
+	const auto our_nt_set_debug_filter_state = reinterpret_cast<nt_set_debug_filter_state_t>(func);
 
 	our_nt_set_debug_filter_state(0, 0, false);
 
@@ -200,7 +200,7 @@ inline void scyllahide_nt_query_performance_counter()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtQueryPerformanceCounter");
 
-	const auto our_nt_query_performance_counter = reinterpret_cast<NtQueryPerformanceCounter_t>(func);
+	const auto our_nt_query_performance_counter = reinterpret_cast<nt_query_performance_counter_t>(func);
 
 	LARGE_INTEGER counter;
 	our_nt_query_performance_counter(&counter, nullptr);
@@ -221,7 +221,7 @@ inline void scyllahide_nt_get_context_thread()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtGetContextThread");
 
-	const auto our_nt_get_context_thread = reinterpret_cast<NtGetContextThread_t>(func);
+	const auto our_nt_get_context_thread = reinterpret_cast<nt_get_context_thread_t>(func);
 	CONTEXT ctx;
 	our_nt_get_context_thread(GetCurrentThread(), &ctx);
 
@@ -241,7 +241,7 @@ inline void scyllahide_get_tick_count()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"kernel32.dll"));
 	const auto func = get_function(p, "GetTickCount");
 
-	const auto our_get_tick_count = reinterpret_cast<t_GetTickCount>(func);
+	const auto our_get_tick_count = reinterpret_cast<get_tick_count_t>(func);
 	our_get_tick_count();
 
 	auto* func_bytes = reinterpret_cast<BYTE*>(func);
@@ -268,7 +268,7 @@ inline void scyllahide_get_tick_count64()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"kernel32.dll"));
 	const auto func = get_function(p, "GetTickCount64");
 
-	const auto our_get_tick_count64 = reinterpret_cast<t_GetTickCount64>(func);
+	const auto our_get_tick_count64 = reinterpret_cast<get_tick_count64_t>(func);
 	our_get_tick_count64();
 
 	auto* func_bytes = reinterpret_cast<BYTE*>(func);
@@ -295,7 +295,7 @@ inline void scyllahide_output_debug_string_a()
 	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"kernel32.dll"));
 	const auto func = get_function(p, "OutputDebugStringA");
 
-	const auto our_output_debug_string_a = reinterpret_cast<t_OutputDebugStringA>(func);
+	const auto our_output_debug_string_a = reinterpret_cast<output_debug_string_a_t>(func);
 	our_output_debug_string_a("hello");
 
 	auto* func_bytes = reinterpret_cast<BYTE*>(func);
