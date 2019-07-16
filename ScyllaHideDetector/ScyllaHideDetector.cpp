@@ -4,9 +4,6 @@
 #include "MemoryMaster/pch.h"
 #include "MemoryMaster/SigFinder.h"
 
-#define NtCurrentPeb() (NtCurrentTeb()->ProcessEnvironmentBlock)
-WORD OSBuildNumber;
-
 void Scyllahide_NtSetInformationThread()
 {
     auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");

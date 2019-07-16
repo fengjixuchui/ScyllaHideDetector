@@ -53,5 +53,8 @@
     <ClInclude Include="utils\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\ntdll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

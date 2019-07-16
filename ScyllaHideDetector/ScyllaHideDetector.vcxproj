@@ -165,6 +165,7 @@
     <ClInclude Include="MemoryMaster\Structures.h" />
     <ClInclude Include="MemoryMaster\WinUtils.h" />
     <ClInclude Include="utils\common.h" />
+    <ClInclude Include="utils\ntdll.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
