@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <Windows.h>
-#include <stdio.h>
 
 typedef NTSTATUS (*NtSetInformationThread_t)(
 	IN HANDLE ThreadHandle,
@@ -52,9 +51,9 @@ typedef NTSTATUS (*NtGetContextThread_t)(
 	IN HANDLE ThreadHandle,
 	OUT PCONTEXT pContext);
 
-typedef DWORD (WINAPI* t_GetTickCount)(void);
+typedef DWORD (WINAPI* t_GetTickCount)();
 
-typedef ULONGLONG (WINAPI* t_GetTickCount64)(void);
+typedef ULONGLONG (WINAPI* t_GetTickCount64)();
 
 typedef DWORD (WINAPI* t_OutputDebugStringA)(LPCSTR lpOutputString);
 
@@ -76,31 +75,31 @@ typedef struct
 	Функция получения базового адреса модуля,
 		который выгружен в наше виртуальное адресное пространство
  */
-PVOID64 GetModuleBase(LPWSTR moduleName)
+inline PVOID64 get_module_base(const LPWSTR module_name)
 {
 	// читаем из сегментного регистра gs со смещением 0x60 (в x64 процессе загрузчик программ винды в контексте процесса в gs пишет Thread Environment Block)
 	// а если взять со смещением 0x60 (параметр структуры Thread Environment Block) - то будет PEB (Process Environment Block)
-	UINT64 peb = (UINT64)__readgsqword(0x60);
+	const auto peb = static_cast<UINT64>(__readgsqword(0x60));
 
 	// читаем из структуры PEB структуру LDR
-	UINT64 moduleListAddr = *(UINT64*)(peb + 0x18);
+	const auto module_list_addr = *reinterpret_cast<UINT64*>(peb + 0x18);
 
 	// тут начинается список загруженных в процесс модулей (LinkedList)
-	PVOID64 start = *(PVOID64*)(moduleListAddr + 0x18);
+	auto start = *reinterpret_cast<PVOID64*>(module_list_addr + 0x18);
 
 	// Берем первый LDR_ENTRY
-	LDR_ENTRY* mod = (LDR_ENTRY*)start;
+	auto* mod = static_cast<LDR_ENTRY*>(start);
 
 	// Берем ссылку на след элемент после него (LinkedList жеж)
-	mod = (LDR_ENTRY*)mod->Orders[0].Flink;
+	mod = reinterpret_cast<LDR_ENTRY*>(mod->Orders[0].Flink);
 
 	// идем, пока не пришли к началу
-	while ((UINT64)start != (UINT64)mod)
+	while (reinterpret_cast<UINT64>(start) != reinterpret_cast<UINT64>(mod))
 	{
-		if (mod->base != NULL)
+		if (mod->base != nullptr)
 		{
 			// Это нужный нам модуль?
-			if (!lstrcmpiW((LPCWSTR)mod->dllname.Buffer, moduleName))
+			if (!lstrcmpiW(static_cast<LPCWSTR>(mod->dllname.Buffer), module_name))
 			{
 				// Да!
 				return mod->base;
@@ -108,45 +107,45 @@ PVOID64 GetModuleBase(LPWSTR moduleName)
 		}
 
 		// Идем далее
-		mod = (LDR_ENTRY*)mod->Orders[0].Flink;
+		mod = reinterpret_cast<LDR_ENTRY*>(mod->Orders[0].Flink);
 	}
 
-	return 0;
+	return nullptr;
 }
 
 // тут просто парсим экспорт из PE заголовков загруженного модуля
-UINT64 GetFunction(UINT64 base, LPCSTR function)
+inline UINT64 get_function(const UINT64 base, const LPCSTR function)
 {
 	// пропускаем лишнее
-	IMAGE_DOS_HEADER* dosHeader = (IMAGE_DOS_HEADER*)base;
-	IMAGE_NT_HEADERS64* ntHeaders = (IMAGE_NT_HEADERS64*)(base + dosHeader->e_lfanew);
+	auto* dos_header = reinterpret_cast<IMAGE_DOS_HEADER*>(base);
+	auto* nt_headers = reinterpret_cast<IMAGE_NT_HEADERS64*>(base + dos_header->e_lfanew);
 
 	// получаем таблицу экспорта
-	IMAGE_EXPORT_DIRECTORY* exportTable = (IMAGE_EXPORT_DIRECTORY*)(base + ntHeaders->OptionalHeader.DataDirectory[0].
+	auto* export_table = reinterpret_cast<IMAGE_EXPORT_DIRECTORY*>(base + nt_headers->OptionalHeader.DataDirectory[0].
 		VirtualAddress);
 
 	// получаем ее элементы (идентифицируются по именам и ordinal - почитать можешь подробнее в нетике)
-	DWORD* functions = (DWORD*)(base + exportTable->AddressOfFunctions);
-	WORD* ords = (WORD*)(base + exportTable->AddressOfNameOrdinals);
-	DWORD* names = (DWORD*)(base + exportTable->AddressOfNames);
+	auto* functions = reinterpret_cast<DWORD*>(base + export_table->AddressOfFunctions);
+	const auto ords = reinterpret_cast<WORD*>(base + export_table->AddressOfNameOrdinals);
+	auto* names = reinterpret_cast<DWORD*>(base + export_table->AddressOfNames);
 
 	// проходимся по именам
-	for (int i = 0; i < exportTable->NumberOfNames; i++)
+	for (auto i = 0; i < export_table->NumberOfNames; i++)
 	{
-		char* data = (char*)(base + (UINT64)names[i]);
+		const auto data = reinterpret_cast<char*>(base + static_cast<UINT64>(names[i]));
 
 		// это нужное нам имя?
 		if (lstrcmpA(function, data) == 0)
 		{
 			// да, берем функцию с нужным индексом
-			return base + (UINT64)functions[ords[i]];
+			return base + static_cast<UINT64>(functions[ords[i]]);
 		}
 	}
 
 	return 0;
 }
 
-bool IsHooked(BYTE* func)
+inline bool is_hooked(BYTE* func)
 {
-	return (func[0] == 0x90 || func[0] == 0xE9);
+	return func[0] == 0x90 || func[0] == 0xE9;
 }

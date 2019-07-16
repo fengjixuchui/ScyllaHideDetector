@@ -8,21 +8,21 @@
 int main()
 {
 	// ntdll.dll
-	Scyllahide_NtSetInformationThread();
-	Scyllahide_NtSetInformationProcess();
-	Scyllahide_NtQuerySystemInformation();
-	Scyllahide_NtQueryInformationProcess();
-	Scyllahide_NtQueryObject();
-	Scyllahide_NtYieldExecution();
-	Scyllahide_NtCreateThreadEx();
-	Scyllahide_NtSetDebugFilterState();
-	Scyllahide_NtClose();
-	Scyllahide_NtQueryPerformanceCounter();
-	Scyllahide_NtGetContextThread();
+	scyllahide_nt_set_information_thread();
+	scyllahide_nt_set_information_process();
+	scyllahide_nt_query_system_information();
+	scyllahide_nt_query_information_process();
+	scyllahide_nt_query_object();
+	scyllahide_nt_yield_execution();
+	scyllahide_nt_create_thread_ex();
+	scyllahide_nt_set_debug_filter_state();
+	scyllahide_nt_close();
+	scyllahide_nt_query_performance_counter();
+	scyllahide_nt_get_context_thread();
 	// kernel32.dll
-	Scyllahide_GetTickCount();
-	Scyllahide_GetTickCount64();
-	Scyllahide_OutputDebugStringA();
+	scyllahide_get_tick_count();
+	scyllahide_get_tick_count64();
+	scyllahide_output_debug_string_a();
 
 #ifdef _WIN64
 	if (NtCurrentPeb()->OSBuildNumber >= 14393)

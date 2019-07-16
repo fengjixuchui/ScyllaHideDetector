@@ -1,19 +1,20 @@
 ﻿#pragma once
+#include "utils/common.h"
 
-void Scyllahide_NtSetInformationThread()
+inline void scyllahide_nt_set_information_thread()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtSetInformationThread");
+	auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtSetInformationThread");
 
-	auto ourNtSetInformationThread = (NtSetInformationThread_t)func;
+	const auto our_nt_set_information_thread = reinterpret_cast<NtSetInformationThread_t>(func);
 
-	bool hide = true;
+	auto hide = true;
 
-	ourNtSetInformationThread(GetCurrentThread(), (THREAD_INFORMATION_CLASS)ThreadHideFromDebugger, &hide, 1);
+	our_nt_set_information_thread(GetCurrentThread(), static_cast<THREAD_INFORMATION_CLASS>(ThreadHideFromDebugger), &hide, 1);
 
-	auto funcBytes = (BYTE*)(func);
+	const auto func_bytes = reinterpret_cast<BYTE*>(func);
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtSetInformationThread" << std::endl;
 	}
@@ -23,20 +24,20 @@ void Scyllahide_NtSetInformationThread()
 	}
 }
 
-void Scyllahide_NtSetInformationProcess()
+inline void scyllahide_nt_set_information_process()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtSetInformationProcess");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtSetInformationProcess");
 
-	auto ourNtSetInformationProcess = (NtSetInformationProcess_t)func;
+	const auto our_nt_set_information_process = reinterpret_cast<NtSetInformationProcess_t>(func);
 
-	bool hide = true;
+	auto hide = true;
 
-	ourNtSetInformationProcess(GetCurrentThread(), (THREAD_INFORMATION_CLASS)ThreadHideFromDebugger, &hide, 1);
+	our_nt_set_information_process(GetCurrentThread(), static_cast<THREAD_INFORMATION_CLASS>(ThreadHideFromDebugger), &hide, 1);
 
-	auto* funcBytes = (BYTE*)(func);
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtSetInformationProcess" << std::endl;
 	}
@@ -46,20 +47,20 @@ void Scyllahide_NtSetInformationProcess()
 	}
 }
 
-void Scyllahide_NtQuerySystemInformation()
+inline void scyllahide_nt_query_system_information()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtQuerySystemInformation");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtQuerySystemInformation");
 
-	auto ourNtQuerySystemInformation = (NtQuerySystemInformation_t)func;
+	const auto our_nt_query_system_information = reinterpret_cast<NtQuerySystemInformation_t>(func);
 
-	bool hide = true;
+	auto hide = true;
 
-	ourNtQuerySystemInformation(SystemProcessInformation, &hide, 1, nullptr);
+	our_nt_query_system_information(SystemProcessInformation, &hide, 1, nullptr);
 
-	auto* funcBytes = (BYTE*)(func);
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtQuerySystemInformation" << std::endl;
 	}
@@ -69,20 +70,20 @@ void Scyllahide_NtQuerySystemInformation()
 	}
 }
 
-void Scyllahide_NtQueryInformationProcess()
+inline void scyllahide_nt_query_information_process()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtQueryInformationProcess");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtQueryInformationProcess");
 
-	auto ourNtQueryInformationProcess = (NtQueryInformationProcess_t)func;
+	const auto our_nt_query_information_process = reinterpret_cast<NtQueryInformationProcess_t>(func);
 
-	bool hide = true;
+	auto hide = true;
 
-	ourNtQueryInformationProcess(GetCurrentThread(), SystemProcessInformation, &hide, 1, nullptr);
+	our_nt_query_information_process(GetCurrentThread(), SystemProcessInformation, &hide, 1, nullptr);
 
-	auto* funcBytes = (BYTE*)(func);
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtQueryInformationProcess" << std::endl;
 	}
@@ -92,20 +93,20 @@ void Scyllahide_NtQueryInformationProcess()
 	}
 }
 
-void Scyllahide_NtQueryObject()
+inline void scyllahide_nt_query_object()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtQueryObject");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtQueryObject");
 
-	auto ourNtQueryObject = (NtQueryObject_t)func;
+	const auto our_nt_query_object = reinterpret_cast<NtQueryObject_t>(func);
 
-	bool hide = true;
+	auto hide = true;
 
-	ourNtQueryObject(GetCurrentThread(), MaxObjectInfoClass, &hide, 1, nullptr);
+	our_nt_query_object(GetCurrentThread(), MaxObjectInfoClass, &hide, 1, nullptr);
 
-	auto* funcBytes = (BYTE*)(func);
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtQueryObject" << std::endl;
 	}
@@ -115,18 +116,18 @@ void Scyllahide_NtQueryObject()
 	}
 }
 
-void Scyllahide_NtYieldExecution()
+inline void scyllahide_nt_yield_execution()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtYieldExecution");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtYieldExecution");
 
-	auto ourNtYieldExecution = (NtYieldExecution_t)func;
+	const auto our_nt_yield_execution = reinterpret_cast<NtYieldExecution_t>(func);
 
-	ourNtYieldExecution();
+	our_nt_yield_execution();
 
-	auto* funcBytes = (BYTE*)(func);
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtYieldExecution" << std::endl;
 	}
@@ -136,20 +137,18 @@ void Scyllahide_NtYieldExecution()
 	}
 }
 
-void Scyllahide_NtCreateThreadEx()
+inline void scyllahide_nt_create_thread_ex()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtCreateThreadEx");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtCreateThreadEx");
 
-	auto ourNtCreateThreadEx = (NtCreateThreadEx_t)func;
+	const auto our_nt_create_thread_ex = reinterpret_cast<NtCreateThreadEx_t>(func);
 
-	bool hide = true;
+	our_nt_create_thread_ex();
 
-	ourNtCreateThreadEx();
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
 
-	auto* funcBytes = (BYTE*)(func);
-
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtCreateThreadEx" << std::endl;
 	}
@@ -159,19 +158,17 @@ void Scyllahide_NtCreateThreadEx()
 	}
 }
 
-void Scyllahide_NtSetDebugFilterState()
+inline void scyllahide_nt_set_debug_filter_state()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtSetDebugFilterState");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtSetDebugFilterState");
 
-	auto ourNtSetDebugFilterState = (NtSetDebugFilterState_t)func;
+	const auto our_nt_set_debug_filter_state = reinterpret_cast<NtSetDebugFilterState_t>(func);
 
-	bool hide = true;
+	our_nt_set_debug_filter_state(0, 0, false);
 
-	ourNtSetDebugFilterState(0, 0, false);
-
-	auto* funcBytes = (BYTE*)(func);
-	if (IsHooked(funcBytes))
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtSetDebugFilterState" << std::endl;
 	}
@@ -181,14 +178,14 @@ void Scyllahide_NtSetDebugFilterState()
 	}
 }
 
-void Scyllahide_NtClose()
+inline void scyllahide_nt_close()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtClose");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtClose");
 
-	auto* funcBytes = (BYTE*)(func);
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtClose" << std::endl;
 	}
@@ -198,19 +195,18 @@ void Scyllahide_NtClose()
 	}
 }
 
-void Scyllahide_NtQueryPerformanceCounter()
+inline void scyllahide_nt_query_performance_counter()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtQueryPerformanceCounter");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtQueryPerformanceCounter");
 
-	auto ourNtQueryPerformanceCounter = (NtQueryPerformanceCounter_t)func;
+	const auto our_nt_query_performance_counter = reinterpret_cast<NtQueryPerformanceCounter_t>(func);
 
-	bool hide = true;
 	LARGE_INTEGER counter;
-	ourNtQueryPerformanceCounter(&counter, nullptr);
+	our_nt_query_performance_counter(&counter, nullptr);
 
-	auto* funcBytes = (BYTE*)(func);
-	if (IsHooked(funcBytes))
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtQueryPerformanceCounter" << std::endl;
 	}
@@ -220,17 +216,17 @@ void Scyllahide_NtQueryPerformanceCounter()
 	}
 }
 
-void Scyllahide_NtGetContextThread()
+inline void scyllahide_nt_get_context_thread()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"ntdll.dll");
-	UINT64 func = GetFunction(p, "NtGetContextThread");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto func = get_function(p, "NtGetContextThread");
 
-	auto ourNtGetContextThread = (NtGetContextThread_t)func;
+	const auto our_nt_get_context_thread = reinterpret_cast<NtGetContextThread_t>(func);
 	CONTEXT ctx;
-	ourNtGetContextThread(GetCurrentThread(), &ctx);
+	our_nt_get_context_thread(GetCurrentThread(), &ctx);
 
-	auto* funcBytes = (BYTE*)(func);
-	if (IsHooked(funcBytes))
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] NtGetContextThread" << std::endl;
 	}
@@ -240,24 +236,24 @@ void Scyllahide_NtGetContextThread()
 	}
 }
 
-void Scyllahide_GetTickCount()
+inline void scyllahide_get_tick_count()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"kernel32.dll");
-	UINT64 func = GetFunction(p, "GetTickCount");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"kernel32.dll"));
+	const auto func = get_function(p, "GetTickCount");
 
-	auto ourGetTickCount = (t_GetTickCount)func; // вот так
-	ourGetTickCount();
+	const auto our_get_tick_count = reinterpret_cast<t_GetTickCount>(func);
+	our_get_tick_count();
 
-	auto* funcBytes = (BYTE*)(func);
-	BYTE TrampolineFunction[3] = {0x48, 0xFF, 0x25};
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
+	BYTE trampoline_function[3] = {0x48, 0xFF, 0x25};
 
-	if (memcmp(funcBytes, TrampolineFunction, 3) == 0)
+	if (memcmp(func_bytes, trampoline_function, 3) == 0)
 	{
-		DWORD functionPointer = *(DWORD*)(funcBytes + 0x3);
-		funcBytes = *(BYTE**)(funcBytes + functionPointer + 0x7);
+		const auto function_pointer = *reinterpret_cast<DWORD*>(func_bytes + 0x3);
+		func_bytes = *reinterpret_cast<BYTE**>(func_bytes + function_pointer + 0x7);
 	}
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] GetTickCount" << std::endl;
 	}
@@ -267,24 +263,24 @@ void Scyllahide_GetTickCount()
 	}
 }
 
-void Scyllahide_GetTickCount64()
+inline void scyllahide_get_tick_count64()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"kernel32.dll");
-	auto func = GetFunction(p, "GetTickCount64");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"kernel32.dll"));
+	const auto func = get_function(p, "GetTickCount64");
 
-	auto ourGetTickCount64 = (t_GetTickCount64)func;
-	ourGetTickCount64();
+	const auto our_get_tick_count64 = reinterpret_cast<t_GetTickCount64>(func);
+	our_get_tick_count64();
 
-	auto* funcBytes = (BYTE*)(func);
-	BYTE TrampolineFunction[3] = {0x48, 0xFF, 0x25};
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
+	BYTE trampoline_function[3] = {0x48, 0xFF, 0x25};
 
-	if (memcmp(funcBytes, TrampolineFunction, 3) == 0)
+	if (memcmp(func_bytes, trampoline_function, 3) == 0)
 	{
-		DWORD functionPointer = *(DWORD*)(funcBytes + 0x3);
-		funcBytes = *(BYTE**)(funcBytes + functionPointer + 0x7);
+		const auto function_pointer = *reinterpret_cast<DWORD*>(func_bytes + 0x3);
+		func_bytes = *reinterpret_cast<BYTE**>(func_bytes + function_pointer + 0x7);
 	}
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] GetTickCount64" << std::endl;
 	}
@@ -294,24 +290,24 @@ void Scyllahide_GetTickCount64()
 	}
 }
 
-void Scyllahide_OutputDebugStringA()
+inline void scyllahide_output_debug_string_a()
 {
-	auto p = (UINT64)GetModuleBase((LPWSTR)L"kernel32.dll");
-	UINT64 func = GetFunction(p, "OutputDebugStringA");
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"kernel32.dll"));
+	const auto func = get_function(p, "OutputDebugStringA");
 
-	auto ourOutputDebugStringA = (t_OutputDebugStringA)func;
-	ourOutputDebugStringA("hello");
+	const auto our_output_debug_string_a = reinterpret_cast<t_OutputDebugStringA>(func);
+	our_output_debug_string_a("hello");
 
-	auto* funcBytes = (BYTE*)(func);
-	BYTE TrampolineFunction[3] = {0x48, 0xFF, 0x25};
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
+	BYTE trampoline_function[3] = {0x48, 0xFF, 0x25};
 
-	if (memcmp(funcBytes, TrampolineFunction, 3) == 0)
+	if (memcmp(func_bytes, trampoline_function, 3) == 0)
 	{
-		DWORD functionPointer = *(DWORD*)(funcBytes + 0x3);
-		funcBytes = *(BYTE**)(funcBytes + functionPointer + 0x7);
+		const auto function_pointer = *reinterpret_cast<DWORD*>(func_bytes + 0x3);
+		func_bytes = *reinterpret_cast<BYTE**>(func_bytes + function_pointer + 0x7);
 	}
 
-	if (IsHooked(funcBytes))
+	if (is_hooked(func_bytes))
 	{
 		std::cout << "[DETECTED] OutputDebugStringA" << std::endl;
 	}

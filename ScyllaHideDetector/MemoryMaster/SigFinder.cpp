@@ -45,7 +45,7 @@ void* MemoryMaster::SigFinder::Find()
 void* MemoryMaster::SigFinder::Find(const char* pattern, const char* mask)
 {
 	size_t sizeOfPattern = strlen(mask);
-	size_t endOfRegion = ((size_t)this->region + this->regionSize);
+	size_t endOfRegion = (size_t)this->region + this->regionSize;
 
 	size_t position = (size_t)this->region;
 
