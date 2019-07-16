@@ -130,7 +130,7 @@ inline UINT64 get_function(const UINT64 base, const LPCSTR function)
 	auto* names = reinterpret_cast<DWORD*>(base + export_table->AddressOfNames);
 
 	// проходимся по именам
-	for (auto i = 0; i < export_table->NumberOfNames; i++)
+	for (auto i = 0; i < static_cast<int>(export_table->NumberOfNames); i++)
 	{
 		const auto data = reinterpret_cast<char*>(base + static_cast<UINT64>(names[i]));
 
