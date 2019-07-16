@@ -35,16 +35,16 @@ int main()
 		// user32.dll signatures
 		LoadLibraryA("user32.dll");
 		//DebugBreak();
-		MemoryMaster::SigFinder finder = MemoryMaster::SigFinder("user32.dll");
+		auto finder = MemoryMaster::SigFinder("user32.dll");
 		///----------------------------------------------------------------------------------------------------
 		// TODO: сделать сигнатуру ScyllaHide и добавить поддержку x86
 		// на данный момент это сигнатура отсутствия ScyllaHide
-		void* NtUserFindWindowEx_sig = finder.Find(
+		const auto nt_user_find_window_ex_sig = finder.Find(
 			"\x4C\x8B\xD1\xB8\x00\x00\x00\x00\x0F\x05\xC3\xFF\x15\x9F\x85\x0A\x00"
 			"\xE9",
 			"xxxx????xxxxxxxxxx");
 
-		if (!NtUserFindWindowEx_sig)
+		if (!nt_user_find_window_ex_sig)
 		{
 			std::cout << "[DETECTED] FindWindowA" << std::endl;
 		}
@@ -54,12 +54,12 @@ int main()
 		}
 
 		///----------------------------------------------------------------------------------------------------
-		void* Scyllahide_BlockInput_sig = finder.Find(
+		const auto scyllahide_block_input_sig = finder.Find(
 			"\x4C\x8B\xD1\xB8\x00\x00\x00\x00\x0F\x05\xC3\x90\x90\x90\x90\x90\x90"
 			"\xFF\x25\x00\x00\x00\x00",
 			"xxxx????xxxxxxxxxxxxxxx");
 
-		if (Scyllahide_BlockInput_sig)
+		if (scyllahide_block_input_sig)
 		{
 			std::cout << "[DETECTED] BlockInput" << std::endl;
 		}
@@ -69,10 +69,10 @@ int main()
 		}
 
 		///----------------------------------------------------------------------------------------------------
-		void* Scyllahide_NtUserQueryWindow_sig = finder.Find(
+		const auto scyllahide_nt_user_query_window_sig = finder.Find(
 			"\xEB\x01\xCC\x90\xFF\x25\x00\x00\x00\x00\x9C\x1F", "xxxxxxxxxxxx");
 
-		if (Scyllahide_NtUserQueryWindow_sig)
+		if (scyllahide_nt_user_query_window_sig)
 		{
 			std::cout << "[DETECTED] NtUserQueryWindow" << std::endl;
 		}
@@ -83,14 +83,14 @@ int main()
 		///----------------------------------------------------------------------------------------------------
 
 		LoadLibraryA("ntdll.dll");
-		MemoryMaster::SigFinder finder_ntdll = MemoryMaster::SigFinder("ntdll.dll");
+		auto finder_ntdll = MemoryMaster::SigFinder("ntdll.dll");
 		///----------------------------------------------------------------------------------------------------
-		void* Scyllahide_NtSetContextThread_sig = finder_ntdll.Find(
+		const auto scyllahide_nt_set_context_thread_sig = finder_ntdll.Find(
 			"\x4C\x8B\xD1\xB8\x00\x00\x00\x00\x0F\x05\xC3\x0F\x1F\x44\x00\x00\x90"
 			"\xFF\x25\x00\x00\x00\x00\x7C\x18",
 			"xxxx????xxxxxxxxxxxxxxxxx");
 
-		if (Scyllahide_NtSetContextThread_sig)
+		if (scyllahide_nt_set_context_thread_sig)
 		{
 			std::cout << "[DETECTED] NtSetContextThread" << std::endl;
 		}
