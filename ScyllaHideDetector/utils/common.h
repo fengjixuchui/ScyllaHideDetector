@@ -145,7 +145,7 @@ inline UINT64 get_function(const UINT64 base, const LPCSTR function)
 	return 0;
 }
 
-inline bool is_hooked(BYTE* func)
+inline bool is_hooked(const BYTE* func)
 {
 	return func[0] == 0x90 || func[0] == 0xE9;
 }
