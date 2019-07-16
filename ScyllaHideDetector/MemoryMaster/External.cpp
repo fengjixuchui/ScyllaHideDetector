@@ -2,10 +2,12 @@
 #include "WinUtils.h"
 #include "External.h"
 
-InjectStatus MemoryMaster::External::Injector::InjectDLL(const char* dll, DWORD pid) {
+InjectStatus MemoryMaster::External::Injector::InjectDLL(const char* dll, DWORD pid)
+{
 	HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
 
-	if (process == INVALID_HANDLE_VALUE) {
+	if (process == INVALID_HANDLE_VALUE)
+	{
 		return InjectStatus::ERR_OPEN_PROCESS;
 	}
 
@@ -23,26 +25,30 @@ InjectStatus MemoryMaster::External::Injector::InjectDLL(const char* dll, DWORD 
 		PAGE_READWRITE
 	);
 
-	if (!dllNameAllocated) {
+	if (!dllNameAllocated)
+	{
 		return InjectStatus::ERR_WRITE_DLL_NAME;
 	}
 
 	SIZE_T written;
 	BOOL writeSuccess = WriteProcessMemory(process, dllNameAllocated, fullFilename, _fixed, &written);
 
-	if (!writeSuccess) {
+	if (!writeSuccess)
+	{
 		return InjectStatus::ERR_WRITE_DLL_NAME;
 	}
 
 	HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
 
-	if (!kernel32) {
+	if (!kernel32)
+	{
 		return InjectStatus::ERR_WRITE_DLL_NAME;
 	}
 
 	LPVOID loadLibrary = GetProcAddress(kernel32, "LoadLibraryA");
 
-	if (loadLibrary == 0) {
+	if (loadLibrary == 0)
+	{
 		return InjectStatus::ERR_GET_LOADLIBRARY;
 	}
 
@@ -60,7 +66,8 @@ InjectStatus MemoryMaster::External::Injector::InjectDLL(const char* dll, DWORD 
 	return InjectStatus::SUCCESS;
 }
 
-InjectStatus MemoryMaster::External::Injector::InjectDLL(const char* dll, const char* processName) {
+InjectStatus MemoryMaster::External::Injector::InjectDLL(const char* dll, const char* processName)
+{
 	DWORD pid = MemoryMaster::WinUtils::GetPID(processName);
 
 	return MemoryMaster::External::Injector::InjectDLL(dll, pid);

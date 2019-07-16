@@ -2,8 +2,10 @@
 
 #include "WinUtils.h"
 
-namespace MemoryMaster {
-	class SigFinder {
+namespace MemoryMaster
+{
+	class SigFinder
+	{
 	private:
 
 		const char* mask = nullptr;
@@ -13,7 +15,7 @@ namespace MemoryMaster {
 		size_t regionSize;
 
 		bool MaskCompare(const char* pattern, const char* mask, char* data);
-		
+
 	public:
 
 		SigFinder(void* region, size_t regionSize);
