@@ -3,7 +3,7 @@
 
 inline void scyllahide_nt_set_information_thread()
 {
-	auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
+	const auto p = reinterpret_cast<UINT64>(get_module_base((LPWSTR)L"ntdll.dll"));
 	const auto func = get_function(p, "NtSetInformationThread");
 
 	const auto our_nt_set_information_thread = reinterpret_cast<nt_set_information_thread_t>(func);
