@@ -301,7 +301,7 @@ void Scyllahide_OutputDebugStringA()
 
 int main()
 {
-
+	// ntdll.dll
     Scyllahide_NtSetInformationThread();
     Scyllahide_NtSetInformationProcess();
     Scyllahide_NtQuerySystemInformation();
@@ -313,6 +313,7 @@ int main()
     Scyllahide_NtClose();
     Scyllahide_NtQueryPerformanceCounter();
     Scyllahide_NtGetContextThread();
+	// kernel32.dll
     Scyllahide_GetTickCount();
     Scyllahide_GetTickCount64();
     Scyllahide_OutputDebugStringA();
