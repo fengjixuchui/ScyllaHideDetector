@@ -56,5 +56,8 @@
     <ClInclude Include="utils\ntdll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ScyllaHideDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

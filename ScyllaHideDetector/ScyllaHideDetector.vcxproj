@@ -164,6 +164,7 @@
     <ClInclude Include="MemoryMaster\SigFinder.h" />
     <ClInclude Include="MemoryMaster\Structures.h" />
     <ClInclude Include="MemoryMaster\WinUtils.h" />
+    <ClInclude Include="ScyllaHideDetector.h" />
     <ClInclude Include="utils\common.h" />
     <ClInclude Include="utils\ntdll.h" />
   </ItemGroup>

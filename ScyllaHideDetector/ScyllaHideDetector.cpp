@@ -3,8 +3,7 @@
 #include "utils/common.h"
 #include "MemoryMaster/pch.h"
 #include "MemoryMaster/SigFinder.h"
-
-
+#include "ScyllaHideDetector.h"
 
 int main()
 {
