@@ -260,3 +260,49 @@ inline void scyllahide_output_debug_string_a()
 		std::cout << "[OK] OutputDebugStringA" << std::endl;
 	}
 }
+
+inline void scyllahide_getlocaltime()
+{
+	const auto func = MemoryMaster::WinUtils::GetFunctionPEB((LPWSTR)L"kernel32.dll", "GetLocalTime");
+
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
+	BYTE trampoline_function[3] = {0x48, 0xFF, 0x25};
+
+	if (memcmp(func_bytes, trampoline_function, 3) == 0)
+	{
+		const auto function_pointer = *reinterpret_cast<DWORD*>(func_bytes + 0x3);
+		func_bytes = *reinterpret_cast<BYTE**>(func_bytes + function_pointer + 0x7);
+	}
+
+	if (is_hooked(func_bytes))
+	{
+		std::cout << "[DETECTED] GetLocalTime" << std::endl;
+	}
+	else
+	{
+		std::cout << "[OK] GetLocalTime" << std::endl;
+	}
+}
+
+inline void scyllahide_getsystemtime()
+{
+	const auto func = MemoryMaster::WinUtils::GetFunctionPEB((LPWSTR)L"kernel32.dll", "GetSystemTime");
+
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
+	BYTE trampoline_function[3] = {0x48, 0xFF, 0x25};
+
+	if (memcmp(func_bytes, trampoline_function, 3) == 0)
+	{
+		const auto function_pointer = *reinterpret_cast<DWORD*>(func_bytes + 0x3);
+		func_bytes = *reinterpret_cast<BYTE**>(func_bytes + function_pointer + 0x7);
+	}
+
+	if (is_hooked(func_bytes))
+	{
+		std::cout << "[DETECTED] GetSystemTime" << std::endl;
+	}
+	else
+	{
+		std::cout << "[OK] GetSystemTime" << std::endl;
+	}
+}

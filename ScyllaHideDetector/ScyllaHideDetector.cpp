@@ -24,6 +24,9 @@ int main()
 	scyllahide_get_tick_count();
 	scyllahide_get_tick_count64();
 	scyllahide_output_debug_string_a();
+	scyllahide_getlocaltime();
+	scyllahide_getsystemtime();
+
 
 #ifdef _WIN64
 	if (NtCurrentPeb()->OSBuildNumber >= 14393)
