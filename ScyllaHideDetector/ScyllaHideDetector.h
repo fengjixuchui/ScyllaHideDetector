@@ -176,6 +176,22 @@ inline void scyllahide_nt_get_context_thread()
 	}
 }
 
+inline void scyllahide_nt_set_context_thread()
+{
+	const auto func = MemoryMaster::WinUtils::GetFunctionPEB((LPWSTR)L"ntdll.dll", "NtSetContextThread");
+
+	auto* func_bytes = reinterpret_cast<BYTE*>(func);
+
+	if (is_hooked(func_bytes))
+	{
+		std::cout << "[DETECTED] NtSetContextThread" << std::endl;
+	}
+	else
+	{
+		std::cout << "[OK] NtSetContextThread" << std::endl;
+	}
+}
+
 inline void scyllahide_get_tick_count()
 {
 	const auto func = MemoryMaster::WinUtils::GetFunctionPEB((LPWSTR)L"kernel32.dll", "GetTickCount");

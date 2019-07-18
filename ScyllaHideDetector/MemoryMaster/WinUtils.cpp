@@ -1,20 +1,23 @@
 #include "pch.h"
 #include "WinUtils.h"
 
-DWORD MemoryMaster::WinUtils::GetPID(const char* processName) {
+DWORD MemoryMaster::WinUtils::GetPID(const char* processName)
+{
 	PROCESSENTRY32 currentProcess;
 	currentProcess.dwSize = sizeof(PROCESSENTRY32);
 
 	HANDLE handle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
 
-	if (Process32First(handle, &currentProcess)) {
-		while (Process32Next(handle, &currentProcess)) {
-
+	if (Process32First(handle, &currentProcess))
+	{
+		while (Process32Next(handle, &currentProcess))
+		{
 			wchar_t tmp[255];
 
 			mbstowcs(tmp, processName, 255);
 
-			if (lstrcmpW(currentProcess.szExeFile, tmp) == 0) {
+			if (lstrcmpW(currentProcess.szExeFile, tmp) == 0)
+			{
 				CloseHandle(handle);
 				return currentProcess.th32ProcessID;
 			}
@@ -26,7 +29,8 @@ DWORD MemoryMaster::WinUtils::GetPID(const char* processName) {
 	return 0;
 }
 
-void* MemoryMaster::WinUtils::GetModule(const char* moduleName, PMODULE detailed) {
+void* MemoryMaster::WinUtils::GetModule(const char* moduleName, PMODULE detailed)
+{
 	DWORD sizeRequired;
 	HMODULE* modules;
 
@@ -34,7 +38,8 @@ void* MemoryMaster::WinUtils::GetModule(const char* moduleName, PMODULE detailed
 
 	BOOL result = EnumProcessModules(process, 0, 0, &sizeRequired);
 
-	if (!result) {
+	if (!result)
+	{
 		CloseHandle(process);
 
 		return nullptr;
@@ -49,31 +54,34 @@ void* MemoryMaster::WinUtils::GetModule(const char* moduleName, PMODULE detailed
 
 	if (EnumProcessModules(process, modules, sizeRequired, &sizeRequired))
 	{
-		for (size_t i = 0; i < moduleCount; i++) {
+		for (size_t i = 0; i < moduleCount; i++)
+		{
 			HMODULE module = modules[i];
 
 			char _baseName[512];
 
 			GetModuleBaseNameA(process, module, _baseName, 512);
 
-			if (strcmp(_baseName, moduleName) == 0) {
-				MODULEINFO info = { 0 };
+			if (strcmp(_baseName, moduleName) == 0)
+			{
+				MODULEINFO info = {0};
 
 				BOOL good = GetModuleInformation(process, module, &info, sizeof(MODULEINFO));
 
-				if (!good) {
+				if (!good)
+				{
 					CloseHandle(process);
 					free(modules);
 
 					return nullptr;
 				}
 
-				if (detailed != nullptr) {
+				if (detailed != nullptr)
+				{
 					detailed->base = info.lpBaseOfDll;
 					detailed->size = info.SizeOfImage;
 				}
 
-				
 
 				return info.lpBaseOfDll;
 			}
@@ -85,13 +93,13 @@ void* MemoryMaster::WinUtils::GetModule(const char* moduleName, PMODULE detailed
 	return nullptr;
 }
 
-void* MemoryMaster::WinUtils::GetModulePEB(const LPWSTR moduleName) {
-
+void* MemoryMaster::WinUtils::GetModulePEB(const LPWSTR moduleName)
+{
 #ifdef _WIN64
 	PTR peb = (PTR)__readgsqword(0x60);
 	PTR offset = 0x18;
 
-	
+
 #else
 	UINT peb = (UINT)__readfsdword(0x30);
 	UINT offset = 0x0C;
@@ -100,11 +108,11 @@ void* MemoryMaster::WinUtils::GetModulePEB(const LPWSTR moduleName) {
 	PTR moduleListAddr = *(PTR*)(peb + offset);
 	PVOID start = *(PVOID*)(moduleListAddr + offset);
 
-	LDR_ENTRY * mod = (LDR_ENTRY*)start;
+	LDR_ENTRY* mod = (LDR_ENTRY*)start;
 	mod = (LDR_ENTRY*)mod->Orders[0].Flink;
 
-	while ((PTR)start != (PTR)mod) {
-
+	while ((PTR)start != (PTR)mod)
+	{
 		if (mod->Base != NULL)
 		{
 			if (!lstrcmpiW((LPCWSTR)mod->DllName.Buffer, moduleName))
@@ -119,7 +127,8 @@ void* MemoryMaster::WinUtils::GetModulePEB(const LPWSTR moduleName) {
 	return 0;
 }
 
-void* MemoryMaster::WinUtils::GetFunctionFromExports(const char* functionName, PVOID base) {
+void* MemoryMaster::WinUtils::GetFunctionFromExports(const char* functionName, PVOID base)
+{
 	IMAGE_DOS_HEADER* dosHeader = (IMAGE_DOS_HEADER*)base;
 
 #ifdef _WIN64
@@ -127,19 +136,21 @@ void* MemoryMaster::WinUtils::GetFunctionFromExports(const char* functionName, P
 #else
 	IMAGE_NT_HEADERS* ntHeaders = (IMAGE_NT_HEADERS*)((UINT)base + dosHeader->e_lfanew);
 #endif
-	
 
-	IMAGE_EXPORT_DIRECTORY * exportTable =
+
+	IMAGE_EXPORT_DIRECTORY* exportTable =
 		(IMAGE_EXPORT_DIRECTORY*)((PTR)base + ntHeaders->OptionalHeader.DataDirectory[0].VirtualAddress);
 
-	DWORD * functions = (DWORD*)((PTR)base + exportTable->AddressOfFunctions);
-	WORD * ords = (WORD*)((PTR)base + exportTable->AddressOfNameOrdinals);
-	DWORD * names = (DWORD*)((PTR)base + exportTable->AddressOfNames);
+	DWORD* functions = (DWORD*)((PTR)base + exportTable->AddressOfFunctions);
+	WORD* ords = (WORD*)((PTR)base + exportTable->AddressOfNameOrdinals);
+	DWORD* names = (DWORD*)((PTR)base + exportTable->AddressOfNames);
 
-	for (int i = 0; i < exportTable->NumberOfNames; i++) {
+	for (int i = 0; i < exportTable->NumberOfNames; i++)
+	{
 		char* data = (char*)((PTR)base + (PTR)names[i]);
 
-		if (lstrcmpA(functionName, data) == 0) {
+		if (lstrcmpA(functionName, data) == 0)
+		{
 			return (void*)((PTR)base + (PTR)functions[ords[i]]);
 		}
 	}
@@ -147,10 +158,12 @@ void* MemoryMaster::WinUtils::GetFunctionFromExports(const char* functionName, P
 	return nullptr;
 }
 
-void* MemoryMaster::WinUtils::GetFunctionPEB(LPWSTR dllName, const char* functionName) {
+void* MemoryMaster::WinUtils::GetFunctionPEB(LPWSTR dllName, const char* functionName)
+{
 	void* moduleBase = MemoryMaster::WinUtils::GetModulePEB(dllName);
 
-	if (!moduleBase) {
+	if (!moduleBase)
+	{
 		return nullptr;
 	}
 

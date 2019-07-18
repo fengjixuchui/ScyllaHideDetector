@@ -19,6 +19,7 @@ int main()
 	scyllahide_nt_close();
 	scyllahide_nt_query_performance_counter();
 	scyllahide_nt_get_context_thread();
+	scyllahide_nt_set_context_thread();
 	// kernel32.dll
 	scyllahide_get_tick_count();
 	scyllahide_get_tick_count64();
@@ -79,24 +80,6 @@ int main()
 		else
 		{
 			std::cout << "[OK] NtUserQueryWindow" << std::endl;
-		}
-		///----------------------------------------------------------------------------------------------------
-
-		LoadLibraryA("ntdll.dll");
-		auto finder_ntdll = MemoryMaster::SigFinder("ntdll.dll");
-		///----------------------------------------------------------------------------------------------------
-		const auto scyllahide_nt_set_context_thread_sig = finder_ntdll.Find(
-			"\x4C\x8B\xD1\xB8\x00\x00\x00\x00\x0F\x05\xC3\x0F\x1F\x44\x00\x00\x90"
-			"\xFF\x25\x00\x00\x00\x00\x7C\x18",
-			"xxxx????xxxxxxxxxxxxxxxxx");
-
-		if (scyllahide_nt_set_context_thread_sig)
-		{
-			std::cout << "[DETECTED] NtSetContextThread" << std::endl;
-		}
-		else
-		{
-			std::cout << "[OK] NtSetContextThread" << std::endl;
 		}
 	}
 #endif
