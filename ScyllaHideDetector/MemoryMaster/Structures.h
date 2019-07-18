@@ -2,7 +2,6 @@
 
 #include "pch.h"
 #include "../utils/ntdll.h"
-
 enum InjectStatus {
 	ERR_OPEN_PROCESS,
 	ERR_WRITE_DLL_NAME,
@@ -33,3 +32,9 @@ typedef struct
 	UNICODE_STRING DllFullPath;
 	UNICODE_STRING DllName;
 } LDR_ENTRY;
+
+#ifdef _WIN64
+typedef UINT64 PTR;
+#else
+typedef UINT32 PTR;
+#endif
