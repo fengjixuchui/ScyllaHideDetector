@@ -78,10 +78,6 @@ inline PVOID64 get_module_base(const LPWSTR module_name)
 #if _WIN64
 	const auto peb = static_cast<UINT64>(__readgsqword(0x60));
 #endif
-//TODO: x86 support
-//#ifdef _WIN32
-//	PPEB peb = reinterpret_cast<PPEB>(__readfsdword(0x30));
-//#endif
 
 	// читаем из структуры PEB структуру LDR
 	const auto module_list_addr = *reinterpret_cast<UINT64*>(peb + 0x18);

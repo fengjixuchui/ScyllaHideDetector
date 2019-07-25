@@ -3,7 +3,7 @@ Allows you to find the use of ScyllaHide, if your program will debug.
 
 ## TODO
 - [ ] win32u.dll signatures
-- [ ] full support x86/x64 
+- [ ] support x86 
 
 ## Done
 
@@ -25,6 +25,8 @@ Allows you to find the use of ScyllaHide, if your program will debug.
 - [x] BlockInput
 - [x] NtUserQueryWindow
 - [x] NtSetContextThread
+- [x] GetLocalTime
+- [x] GetSystemTime
 
 ## Screenshots
 ![Normal](NormalExecution.png)

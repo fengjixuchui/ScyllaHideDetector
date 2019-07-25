@@ -92,3 +92,80 @@ void* MemoryMaster::WinUtils::GetModule(const char* moduleName, PMODULE detailed
 
 	return nullptr;
 }
+
+void* MemoryMaster::WinUtils::GetModulePEB(const LPWSTR moduleName)
+{
+#ifdef _WIN64
+	PTR peb = (PTR)__readgsqword(0x60);
+	PTR offset = 0x18;
+
+
+#else
+	UINT peb = (UINT)__readfsdword(0x30);
+	UINT offset = 0x0C;
+#endif
+
+	PTR moduleListAddr = *(PTR*)(peb + offset);
+	PVOID start = *(PVOID*)(moduleListAddr + offset);
+
+	LDR_ENTRY* mod = (LDR_ENTRY*)start;
+	mod = (LDR_ENTRY*)mod->Orders[0].Flink;
+
+	while ((PTR)start != (PTR)mod)
+	{
+		if (mod->Base != NULL)
+		{
+			if (!lstrcmpiW((LPCWSTR)mod->DllName.Buffer, moduleName))
+			{
+				return mod->Base;
+			}
+		}
+
+		mod = (LDR_ENTRY*)mod->Orders[0].Flink;
+	}
+
+	return 0;
+}
+
+void* MemoryMaster::WinUtils::GetFunctionFromExports(const char* functionName, PVOID base)
+{
+	IMAGE_DOS_HEADER* dosHeader = (IMAGE_DOS_HEADER*)base;
+
+#ifdef _WIN64
+	IMAGE_NT_HEADERS64* ntHeaders = (IMAGE_NT_HEADERS64*)((PTR)base + dosHeader->e_lfanew);
+#else
+	IMAGE_NT_HEADERS* ntHeaders = (IMAGE_NT_HEADERS*)((UINT)base + dosHeader->e_lfanew);
+#endif
+
+
+	IMAGE_EXPORT_DIRECTORY* exportTable =
+		(IMAGE_EXPORT_DIRECTORY*)((PTR)base + ntHeaders->OptionalHeader.DataDirectory[0].VirtualAddress);
+
+	DWORD* functions = (DWORD*)((PTR)base + exportTable->AddressOfFunctions);
+	WORD* ords = (WORD*)((PTR)base + exportTable->AddressOfNameOrdinals);
+	DWORD* names = (DWORD*)((PTR)base + exportTable->AddressOfNames);
+
+	for (int i = 0; i < exportTable->NumberOfNames; i++)
+	{
+		char* data = (char*)((PTR)base + (PTR)names[i]);
+
+		if (lstrcmpA(functionName, data) == 0)
+		{
+			return (void*)((PTR)base + (PTR)functions[ords[i]]);
+		}
+	}
+
+	return nullptr;
+}
+
+void* MemoryMaster::WinUtils::GetFunctionPEB(LPWSTR dllName, const char* functionName)
+{
+	void* moduleBase = MemoryMaster::WinUtils::GetModulePEB(dllName);
+
+	if (!moduleBase)
+	{
+		return nullptr;
+	}
+
+	return MemoryMaster::WinUtils::GetFunctionFromExports(functionName, moduleBase);
+}
