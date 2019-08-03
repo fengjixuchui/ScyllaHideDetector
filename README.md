@@ -1,4 +1,8 @@
 # ScyllaHide Detector
+
+# NEW Version
+Check here version 2 https://github.com/lurumdare/ScyllaHideDetector2 with restore bytes.
+
 Allows you to find the use of ScyllaHide, if your program will debug.
 
 ## TODO
